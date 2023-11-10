@@ -1,18 +1,50 @@
-# Vue 3 + TypeScript + Vite
+# Countdown Timer
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+💡 **Idea from** [**here**](https://github.com/florinpop17/app-ideas).
 
-## Recommended IDE Setup
+**Tier:** 1-Beginner
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+We all have important events we look forward to in life, birthdays,
+anniversaries, and holidays to name a few. Wouldn't it be nice to have an app
+that counts down the months, days, hours, minutes, and seconds to an event?
+Countdown Timer is just that app!
 
-## Type Support For `.vue` Imports in TS
+The objective of Countdown Timer is to provide a continuously decrementing
+display of the he months, days, hours, minutes, and seconds to a user entered
+event.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+### Constraints
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+- Use only builtin language functions for your calculations rather than relying
+on a library or package like [MomentJS](https://momentjs.com/). This assumes,
+of course, that the language of your choice has adequate date and time
+manipulation functions built in.
+- You may not use any code generators such as the 
+[Counting Down To](https://countingdownto.com/) site. You should develop your
+own original implementation. 
 
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## User Stories
+
+-   [ ] User can see an event input box containing an event name field, an
+date field, an optional time, and a 'Start' button.
+-   [ ] User can define the event by entering its name, the date it is
+scheduled to take place, and an optional time of the event. If the time is 
+omitted it is assumed to be at Midnight on the event date in the local time
+zone.
+-   [ ] User can see a warning message if the event name is blank.
+-   [ ] User can see a warning message if the event date or time are incorrectly
+entered. 
+-   [ ] User can see a warning message if the time until the event data and time
+that has been entered would overflow the precision of the countdown timer.
+-   [ ] User can click on the 'Start' button to see the countdown timer start
+displaying the days, hours, minutes, and seconds until the event takes place.
+-   [ ] User can see the elements in the countdown timer automatically
+decrement. For example, when the remaining seconds count reaches 0 the remaining
+minutes count will decrement by 1 and the seconds will start to countdown from 59. This progression must take place from seconds all the way up to the remaining days position in countdown display. 
+
+## Bonus features
+
+-   [ ] User can save the event so that it persists across sessions
+-   [ ] User can see an alert when the event is reached
+-   [ ] User can specify more than one event. 
+-   [ ] User can see a countdown timers for each event that has been defined.

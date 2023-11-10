@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  cleave.js:
+    specifier: ^1.6.0
+    version: 1.6.0
   vue:
     specifier: ^3.3.4
     version: 3.3.8(typescript@5.2.2)
@@ -389,6 +392,10 @@ packages:
     dependencies:
       balanced-match: 1.0.2
     dev: true
+
+  /cleave.js@1.6.0:
+    resolution: {integrity: sha512-ivqesy3j5hQVG3gywPfwKPbi/7ZSftY/UNp5uphnqjr25yI2CP8FS2ODQPzuLXXnNLi29e2+PgPkkiKUXLs/Nw==}
+    dev: false
 
   /computeds@0.0.1:
     resolution: {integrity: sha512-7CEBgcMjVmitjYo5q8JTJVra6X5mQ20uTThdK+0kR7UEaDrAWEQcRiBtWJzga4eRpP6afNwwLsX2SET2JhVB1Q==}
