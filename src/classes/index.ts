@@ -1,21 +1,29 @@
-import { Event, EventStatus } from "@/types";
+import { Event, EventStatus, DatetimeGap } from "@/types";
 
 export default class CountdownEvent {
 	name: string;
 	datetime: string;
 	status: EventStatus;
+	timer: any;
+	datetimeGap: DatetimeGap;
 	constructor(event: Event) {
 		this.name = event.name;
 		this.datetime = event.datetime;
 		this.status = event.status || "doing";
+		this.datetimeGap = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+		this.timer = setInterval(() => {
+			this.datetimeGap = this.getDatetimeGap(
+				new Date(event.datetime).getTime(),
+				Date.now(),
+			);
+		}, 1000);
 	}
 
 	done() {
 		this.status = "done";
-		console.log(this);
 	}
 
-	getDatetimeGap(timestamp1: number, timestamp2: number) {
+	getDatetimeGap(timestamp1: number, timestamp2: number): DatetimeGap {
 		const gap = Math.abs(timestamp1 - timestamp2) / 1000;
 
 		const days = Math.floor(gap / 86400);
