@@ -1,37 +1,22 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import Logo from "./components/Logo.vue";
+import Logo from "@/components/Logo.vue";
 
-const getDatetimeGap = (timestamp1: number, timestamp2: number) => {
-	const gap = Math.abs(timestamp1 - timestamp2) / 1000;
+import { Event } from "@/types";
 
-	const days = Math.floor(gap / 86400);
-	const hours = Math.floor((gap % 86400) / 3600);
-	const minutes = Math.floor((gap % 3600) / 60);
-	const seconds = Math.floor(gap % 60);
+import CountdownEvent from "@/classes";
 
-	return {
-		days,
-		hours,
-		minutes,
-		seconds,
-	};
-};
-
-let event = reactive({
+let event: Event = reactive({
 	name: "",
-	datetime: "",
+	datetime: "2023-11-25T13:20",
 });
 
-const handleEventStart = (e: any) => {
+const handleEventCreate = (e: any) => {
 	e.preventDefault();
 
-	const targetDatetime = new Date(event.datetime).getTime();
-	const now = Date.now();
+	const countdownEvent = new CountdownEvent(event);
 
-	const datetimeGap = getDatetimeGap(targetDatetime, now);
-
-	console.log(datetimeGap);
+	console.log(countdownEvent);
 };
 </script>
 
@@ -45,7 +30,7 @@ const handleEventStart = (e: any) => {
 			type="datetime-local"
 		/>
 
-		<button class="event-submit" type="submit" @click="handleEventStart">
+		<button class="event-submit" type="submit" @click="handleEventCreate">
 			Create A Event
 		</button>
 	</form>
