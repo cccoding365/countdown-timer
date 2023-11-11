@@ -1,22 +1,12 @@
 <script setup lang="ts">
 import Logo from "@/components/Logo.vue";
+import { getDatetimeGap } from "@/utils";
 import { computed, ref } from "vue";
 
 const formatToday = computed(() => ({
 	date: new Date().toLocaleDateString().replaceAll("/", "-"),
 	time: new Date().toLocaleTimeString().slice(0, 5),
 }));
-
-const getDatetimeGap = (timestamp1: number, timestamp2: number) => {
-	const gap = Math.abs(timestamp1 - timestamp2) / 1000;
-
-	return {
-		days: Math.floor(gap / 86400),
-		hours: Math.floor((gap % 86400) / 3600),
-		minutes: Math.floor((gap % 3600) / 60),
-		seconds: Math.floor(gap % 60),
-	};
-};
 
 const eventCountdown = ref({
 	name: "",
@@ -25,6 +15,8 @@ const eventCountdown = ref({
 	minutes: 0,
 	seconds: 0,
 });
+
+let timer: any;
 
 const handleEventCreate = (e: any) => {
 	e.preventDefault();
@@ -35,13 +27,17 @@ const handleEventCreate = (e: any) => {
 
 	const targetDatetime = new Date(`${date} ${time}`).getTime();
 
-	setInterval(() => {
+	timer = setInterval(() => {
 		const now = Date.now();
 
 		// const gap = getDatetimeGap(targetDatetime, now);
 		// console.log({ name, date, time, gap });
 
 		eventCountdown.value = { name, ...getDatetimeGap(targetDatetime, now) };
+
+		if (targetDatetime - now <= 0) {
+			clearInterval(timer);
+		}
 	}, 1000);
 };
 </script>
