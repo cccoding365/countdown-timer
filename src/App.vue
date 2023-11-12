@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import Logo from "@/components/Logo.vue";
-import { getDatetimeGap, formatToday } from "@/utils";
-import { Event, EventForm, TipsOption } from "@/types";
-import { reactive, ref } from "vue";
+import { getDatetimeGap, formatToday, Message } from "@/utils";
+import { Event, EventForm, CountdownBox } from "@/types";
+import { EventFormDefault } from "@/constants";
+import { onMounted, reactive, ref } from "vue";
 
-const eventCountdown = ref({
+const countdownBox = ref<CountdownBox>({
 	name: "",
 	days: 0,
 	hours: 0,
@@ -14,51 +15,50 @@ const eventCountdown = ref({
 
 let timer: any;
 
-const eventContainer = ref<Event[]>([
-	{ name: "Write event name", date: "1998-11-01", time: "10:25" },
-	{
-		name: "Set date time",
-		date: "2021-07-04",
-		time: "12:00",
-	},
-	{
-		name: "Click the Start button",
-		date: "2026-03-19",
-		time: "20:00",
-	},
-]);
+const eventContainer = ref<Event[]>([]);
 
-const tipsHandler = ({ text, duration = 2000 }: TipsOption) => {
-	tips.value = text;
-	setTimeout(() => {
-		tips.value = "";
-	}, duration);
+onMounted(() => {
+	eventContainer.value =
+		JSON.parse(localStorage.getItem("Events") as string) || [];
+});
+
+const handleEventDelete = ({ id }: Event) => {
+	const delEventIdx = eventContainer.value.findIndex(e => e.id === id);
+	eventContainer.value.splice(delEventIdx, 1);
+	localStorage.setItem("Events", JSON.stringify(eventContainer.value));
 };
 
 const handleEventCreate = () => {
 	const { name, date, time } = eventForm;
 
 	if (!name) {
-		return tipsHandler({ text: "The field 'event name' is required!" });
+		return Message({ text: "The field 'event name' is required!" });
 	}
 	if (!date) {
-		return tipsHandler({ text: "The field 'date' is required!" });
+		return Message({ text: "The field 'date' is required!" });
 	}
 	if (!time) {
-		return tipsHandler({ text: "The field 'time' is required!" });
+		return Message({ text: "The field 'time' is required!" });
 	}
 
 	const targetDatetime = new Date(`${date} ${time}`).getTime();
 	const now = Date.now();
 
 	if (targetDatetime <= now) {
-		return tipsHandler({
+		return Message({
 			text: "The target time must be later than the current time!",
 		});
 	}
 
-	const eventObj = { name, date, time };
+	const eventObj = {
+		id: Date.now(),
+		name: `${name}-${eventContainer.value.length}`,
+		date,
+		time,
+	};
 	eventContainer.value.unshift(eventObj);
+
+	localStorage.setItem("Events", JSON.stringify(eventContainer.value));
 
 	handleEventStart(eventObj);
 };
@@ -70,32 +70,26 @@ const handleEventStart = (event: Event) => {
 
 	timer && clearInterval(timer);
 	const now = Date.now();
-	eventCountdown.value = { name, ...getDatetimeGap(targetDatetime, now) };
+	countdownBox.value = { name, ...getDatetimeGap(targetDatetime, now) };
 
 	timer = setInterval(() => {
 		const now = Date.now();
-		eventCountdown.value = { name, ...getDatetimeGap(targetDatetime, now) };
+		countdownBox.value = { name, ...getDatetimeGap(targetDatetime, now) };
 		if (targetDatetime - now <= 0) {
 			clearInterval(timer);
-			eventCountdown.value.name += " Finished";
+			countdownBox.value.name += " Finished";
 		}
 	}, 1000);
 };
 
-const tips = ref("");
-
-const eventForm = reactive<EventForm>({
-	name: "",
-	date: formatToday.date,
-	time: formatToday.time,
-});
+const eventForm = reactive<EventForm>(EventFormDefault);
 
 const numberDegit = (num: number) => {
 	return String(num).padStart(2, "0").length * 50 + "px";
 };
 
 const handleClose = () => {
-	eventCountdown.value.name = "";
+	countdownBox.value.name = "";
 	clearInterval(timer);
 };
 </script>
@@ -103,7 +97,7 @@ const handleClose = () => {
 <template>
 	<Logo />
 
-	<div class="tips">{{ tips }}</div>
+	<div id="tips" class="tips"></div>
 
 	<div class="event-container">
 		<div
@@ -118,31 +112,37 @@ const handleClose = () => {
 				<span class="date">{{ event.date }}</span>
 				<span class="time">{{ event.time }}</span>
 			</div>
+			<div
+				class="close material-symbols-outlined"
+				@click.stop="handleEventDelete(event)"
+			>
+				close
+			</div>
 		</div>
 	</div>
 
-	<div v-if="eventCountdown.name" class="countdown-box">
+	<div v-if="countdownBox.name" class="countdown-box">
 		<span class="close material-symbols-outlined" @click="handleClose">
 			close</span
 		>
 		<div class="gap">
-			<div class="gap-item days">
-				<span :style="`--degit:${numberDegit(eventCountdown.days)}`">
-					{{ eventCountdown.days }}
+			<div v-if="countdownBox.days" class="gap-item days">
+				<span :style="`--degit:${numberDegit(countdownBox.days)}`">
+					{{ countdownBox.days }}
 				</span>
 				days
 			</div>
-			<div class="gap-item hours">
-				<span>{{ eventCountdown.hours }}</span> hours
+			<div v-if="countdownBox.hours" class="gap-item hours">
+				<span>{{ countdownBox.hours }}</span> hours
 			</div>
 			<div class="gap-item minutes">
-				<span>{{ eventCountdown.minutes }}</span> minutes
+				<span>{{ countdownBox.minutes }}</span> minutes
 			</div>
 			<div class="gap-item seconds">
-				<span>{{ eventCountdown.seconds }}</span> seconds
+				<span>{{ countdownBox.seconds }}</span> seconds
 			</div>
 		</div>
-		<div class="name">{{ eventCountdown.name }}</div>
+		<div class="name">{{ countdownBox.name }}</div>
 	</div>
 
 	<div v-else class="event-form">
@@ -151,6 +151,7 @@ const handleClose = () => {
 			v-model="eventForm.name"
 			placeholder="Please enter an event name"
 			autocomplete="off"
+			@keyup.enter="handleEventCreate"
 		/>
 
 		<div class="datetime">
@@ -191,13 +192,20 @@ const handleClose = () => {
 		width: fit-content;
 		max-width: calc(100% - 4em - 6px);
 		margin: 1em;
-		padding: 0.5em 2em 0.5em 1em;
+		padding: 0.5em 3em 0.5em 1em;
 		border-radius: 8px;
 		background-color: #333;
 		text-align: left;
 		border: 3px solid #666;
 		transition: border-color 0.25s;
 		cursor: pointer;
+		position: relative;
+
+		.close {
+			position: absolute;
+			right: 7px;
+			top: 7px;
+		}
 
 		.name {
 			font-size: 1.2em;
