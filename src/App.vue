@@ -186,6 +186,12 @@ const handleClose = () => {
 <style scoped lang="less">
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
 
+@media screen and (max-width: 426px) {
+	.event-container {
+		visibility: hidden;
+	}
+}
+
 .event-container {
 	position: fixed;
 	left: 0;
