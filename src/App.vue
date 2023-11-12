@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Logo from "@/components/Logo.vue";
 import { getDatetimeGap, formatToday } from "@/utils";
+import { Event, EventForm, TipsOption } from "@/types";
 import { reactive, ref } from "vue";
 
 const eventCountdown = ref({
@@ -12,17 +13,6 @@ const eventCountdown = ref({
 });
 
 let timer: any;
-
-interface TipsOption {
-	text: string;
-	duration?: number;
-}
-
-interface Event {
-	name: string;
-	date: string;
-	time: string;
-}
 
 const eventContainer = ref<Event[]>([
 	{ name: "Write event name", date: "1998-11-01", time: "10:25" },
@@ -93,12 +83,6 @@ const handleEventStart = (event: Event) => {
 };
 
 const tips = ref("");
-
-interface EventForm {
-	name: string;
-	date: string;
-	time: string;
-}
 
 const eventForm = reactive<EventForm>({
 	name: "",
@@ -186,7 +170,7 @@ const handleClose = () => {
 <style scoped lang="less">
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
 
-@media screen and (max-width: 426px) {
+@media screen and (max-width: 768px) {
 	.event-container {
 		visibility: hidden;
 	}
