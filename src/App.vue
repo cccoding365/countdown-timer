@@ -6,6 +6,7 @@ import { EventFormDefault } from "@/constants";
 import { onMounted, reactive, ref } from "vue";
 
 const countdownBox = ref<CountdownBox>({
+	id: 0,
 	name: "",
 	days: 0,
 	hours: 0,
@@ -26,6 +27,10 @@ const handleEventDelete = ({ id }: Event) => {
 	const delEventIdx = eventContainer.value.findIndex(e => e.id === id);
 	eventContainer.value.splice(delEventIdx, 1);
 	localStorage.setItem("Events", JSON.stringify(eventContainer.value));
+	if (id === countdownBox.value.id) {
+		countdownBox.value.name = "";
+		timer && clearInterval(timer);
+	}
 };
 
 const handleEventCreate = () => {
@@ -52,7 +57,7 @@ const handleEventCreate = () => {
 
 	const eventObj = {
 		id: Date.now(),
-		name: `${name}-${eventContainer.value.length}`,
+		name,
 		date,
 		time,
 	};
@@ -64,25 +69,33 @@ const handleEventCreate = () => {
 };
 
 const handleEventStart = (event: Event) => {
-	const { name, date, time } = event;
+	const { date, time } = event;
 
 	const targetDatetime = new Date(`${date} ${time}`).getTime();
 
 	timer && clearInterval(timer);
+
 	const now = Date.now();
-	countdownBox.value = { name, ...getDatetimeGap(targetDatetime, now) };
+	countdownBox.value = {
+		...event,
+		...getDatetimeGap(targetDatetime, now),
+	};
 
 	timer = setInterval(() => {
 		const now = Date.now();
-		countdownBox.value = { name, ...getDatetimeGap(targetDatetime, now) };
 		if (targetDatetime - now <= 0) {
 			clearInterval(timer);
-			countdownBox.value.name += " Finished";
+			countdownBox.value.name += " - Finished";
+			return;
 		}
+		countdownBox.value = {
+			...event,
+			...getDatetimeGap(targetDatetime, now),
+		};
 	}, 1000);
 };
 
-const eventForm = reactive<EventForm>(EventFormDefault);
+let eventForm = reactive<EventForm>(EventFormDefault);
 
 const numberDegit = (num: number) => {
 	return String(num).padStart(2, "0").length * 50 + "px";

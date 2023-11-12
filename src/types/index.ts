@@ -18,6 +18,7 @@ export interface EventForm {
 }
 
 export interface CountdownBox {
+	id: number;
 	name: string;
 	days: number;
 	hours: number;
