@@ -25,10 +25,10 @@ interface Event {
 }
 
 const eventContainer = ref<Event[]>([
-	{ name: "吃饭", date: "2022-02-04", time: "13:32" },
-	{ name: "睡觉", date: "2023-02-03", time: "13:32" },
+	{ name: "have a meal", date: "2022-02-04", time: "13:32" },
+	{ name: "go to bed", date: "2023-02-03", time: "13:32" },
 	{
-		name: "打豆豆",
+		name: "write code",
 		date: "2024-02-06",
 		time: "13:32",
 	},
@@ -77,7 +77,7 @@ const handleEventStart = (event: Event) => {
 
 	const targetDatetime = new Date(`${date} ${time}`).getTime();
 
-	console.log(new Date(`${date} ${time}`));
+	timer && clearInterval(timer);
 
 	timer = setInterval(() => {
 		const now = Date.now();
@@ -126,7 +126,6 @@ const eventForm = reactive<EventForm>({
 	</div>
 
 	<div v-if="eventCountdown.name" class="countdown-box">
-		<div class="name">{{ eventCountdown.name }}</div>
 		<div class="gap">
 			<div class="gap-item days">
 				<span>{{ eventCountdown.days }}</span> days
@@ -141,14 +140,13 @@ const eventForm = reactive<EventForm>({
 				<span>{{ eventCountdown.seconds }}</span> seconds
 			</div>
 		</div>
+		<div class="name">{{ eventCountdown.name }}</div>
 	</div>
 
 	<div v-else class="event-form">
 		<input
 			class="name"
 			v-model="eventForm.name"
-			minlength="1"
-			maxlength="7"
 			placeholder="Please enter an event name"
 			autocomplete="off"
 		/>
@@ -169,12 +167,6 @@ const eventForm = reactive<EventForm>({
 
 <style scoped lang="less">
 @import url("https://fonts.googleapis.com/css2?family=Electrolize&display=swap");
-
-@media screen and (max-width: 500px) {
-	.event-container {
-		display: none;
-	}
-}
 
 .event-container {
 	position: fixed;
@@ -200,7 +192,7 @@ const eventForm = reactive<EventForm>({
 		cursor: pointer;
 
 		.name {
-			font-size: 1.5em;
+			font-size: 1.2em;
 			margin-bottom: 8px;
 			white-space: nowrap;
 			overflow: hidden;
@@ -245,6 +237,9 @@ const eventForm = reactive<EventForm>({
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		padding-top: 0.5em;
+		margin-top: 1em;
+		border-top: 3px dashed #999;
 	}
 	.gap {
 		display: flex;
@@ -254,8 +249,14 @@ const eventForm = reactive<EventForm>({
 			flex-direction: column;
 			text-transform: uppercase;
 			span {
-				font-size: 3em;
+				font-size: 5em;
+				width: 100px;
 				font-family: Electrolize;
+			}
+			&.days {
+				span {
+					width: 150px;
+				}
 			}
 		}
 	}
@@ -264,6 +265,7 @@ const eventForm = reactive<EventForm>({
 .event-form {
 	display: flex;
 	flex-direction: column;
+	margin-bottom: 3em;
 
 	.name,
 	.date,
@@ -276,17 +278,24 @@ const eventForm = reactive<EventForm>({
 		margin-bottom: 1em;
 	}
 
+	.datetime {
+		display: flex;
+	}
+
 	.date {
 		margin-right: 1em;
+		font-family: Electrolize;
+	}
+
+	.time {
+		font-family: Electrolize;
 	}
 
 	.submit {
 		height: auto;
-		border: 3px solid #666;
-	}
-
-	.datetime {
-		display: flex;
+		background-color: #333;
+		border-color: #666;
+		text-transform: uppercase;
 	}
 }
 </style>
