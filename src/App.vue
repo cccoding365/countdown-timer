@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import Logo from "@/components/Logo.vue";
-import { getDatetimeGap } from "@/utils";
-import { computed, ref } from "vue";
-
-const formatToday = computed(() => ({
-	date: new Date().toLocaleDateString().replaceAll("/", "-"),
-	time: new Date().toLocaleTimeString().slice(0, 5),
-}));
+import { getDatetimeGap, formatToday } from "@/utils";
+import { reactive, ref } from "vue";
 
 const eventCountdown = ref({
 	name: "",
@@ -18,6 +13,18 @@ const eventCountdown = ref({
 
 let timer: any;
 
+interface TipsOption {
+	text: string;
+	duration?: number;
+}
+
+const tipsHandler = ({ text, duration = 2000 }: TipsOption) => {
+	tips.value = text;
+	setTimeout(() => {
+		tips.value = "";
+	}, duration);
+};
+
 const handleEventCreate = (e: any) => {
 	e.preventDefault();
 
@@ -25,25 +32,60 @@ const handleEventCreate = (e: any) => {
 	const date = e.target.form.date.value;
 	const time = e.target.form.time.value;
 
+	if (!name) {
+		return tipsHandler({ text: "The field 'event name' is required!" });
+	}
+	if (!date) {
+		return tipsHandler({ text: "The field 'date' is required!" });
+	}
+	if (!time) {
+		return tipsHandler({ text: "The field 'time' is required!" });
+	}
+
 	const targetDatetime = new Date(`${date} ${time}`).getTime();
+	const now = Date.now();
+
+	if (targetDatetime <= now) {
+		return tipsHandler({
+			text: "The target time must be later than the current time!",
+		});
+	}
+
+	const gap = getDatetimeGap(targetDatetime, now);
+	console.log({ name, date, time, gap });
 
 	timer = setInterval(() => {
 		const now = Date.now();
-
-		// const gap = getDatetimeGap(targetDatetime, now);
-		// console.log({ name, date, time, gap });
 
 		eventCountdown.value = { name, ...getDatetimeGap(targetDatetime, now) };
 
 		if (targetDatetime - now <= 0) {
 			clearInterval(timer);
+			eventCountdown.value.name += " Finished";
 		}
 	}, 1000);
 };
+
+const tips = ref("");
+
+interface EventForm {
+	name: string;
+	date: string;
+	time: string;
+}
+
+const eventForm = reactive<EventForm>({
+	name: "",
+	date: formatToday.date,
+	time: formatToday.time,
+});
 </script>
 
 <template>
 	<Logo />
+
+	<div class="tips">{{ tips }}</div>
+
 	<div v-if="eventCountdown.name" class="countdown-box">
 		<div class="name">{{ eventCountdown.name }}</div>
 		<div class="gap">
@@ -66,23 +108,22 @@ const handleEventCreate = (e: any) => {
 		<input
 			class="name"
 			name="name"
-			value="Custom Event"
+			v-model="eventForm.name"
 			placeholder="Please enter an event name"
 			autocomplete="off"
-			required
 		/>
 
 		<div class="datetime">
 			<input
 				class="date"
 				:min="formatToday.date"
-				:value="formatToday.date"
+				v-model="eventForm.date"
 				type="date"
 				name="date"
 			/>
 			<input
 				class="time"
-				:value="formatToday.time"
+				v-model="eventForm.time"
 				type="time"
 				name="time"
 			/>
@@ -95,6 +136,10 @@ const handleEventCreate = (e: any) => {
 </template>
 
 <style scoped lang="less">
+.tips {
+	color: red;
+	margin-bottom: 1em;
+}
 .countdown-box {
 	background-color: #333;
 	padding: 2em 5em;
@@ -130,10 +175,6 @@ const handleEventCreate = (e: any) => {
 		font-size: 24px;
 		padding: 10px 20px;
 		margin-bottom: 1em;
-	}
-
-	.name:invalid {
-		border-color: red;
 	}
 
 	.date {

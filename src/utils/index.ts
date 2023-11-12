@@ -8,3 +8,8 @@ export const getDatetimeGap = (timestamp1: number, timestamp2: number) => {
 		seconds: Math.floor(gap % 60),
 	};
 };
+
+export const formatToday = {
+	date: new Date().toLocaleDateString().replaceAll("/", "-"),
+	time: new Date().toLocaleTimeString().slice(0, 5),
+};
