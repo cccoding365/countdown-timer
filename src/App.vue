@@ -1,22 +1,15 @@
 <script setup lang="ts">
 import Logo from "@/components/Logo.vue";
-import { getDatetimeGap, formatToday, Message } from "@/utils";
-import { Event, EventForm, CountdownBox } from "@/types";
-import { EventFormDefault } from "@/constants";
 import { onMounted, reactive, ref } from "vue";
+import { Event, EventForm, CountdownBox } from "@/types";
+import { getDatetimeGap, formatToday, Message } from "@/utils";
+import { EventFormDefault, CountdownBoxDefault } from "@/constants";
 
-const countdownBox = ref<CountdownBox>({
-	id: 0,
-	name: "",
-	days: 0,
-	hours: 0,
-	minutes: 0,
-	seconds: 0,
-});
+const countdownBox = ref<CountdownBox>(CountdownBoxDefault);
+const eventContainer = ref<Event[]>([]);
+const eventForm = reactive<EventForm>(EventFormDefault);
 
 let timer: any;
-
-const eventContainer = ref<Event[]>([]);
 
 onMounted(() => {
 	eventContainer.value =
@@ -95,8 +88,6 @@ const handleEventStart = (event: Event) => {
 	}, 1000);
 };
 
-let eventForm = reactive<EventForm>(EventFormDefault);
-
 const numberDegit = (num: number) => {
 	return String(num).padStart(2, "0").length * 50 + "px";
 };
@@ -136,8 +127,8 @@ const handleClose = () => {
 
 	<div v-if="countdownBox.name" class="countdown-box">
 		<span class="close material-symbols-outlined" @click="handleClose">
-			close</span
-		>
+			close
+		</span>
 		<div class="gap">
 			<div v-if="countdownBox.days" class="gap-item days">
 				<span :style="`--degit:${numberDegit(countdownBox.days)}`">
