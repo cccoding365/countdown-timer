@@ -14,6 +14,10 @@
   -webkit-text-size-adjust: 100%;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -29,7 +33,17 @@ body {
   display: flex;
   place-items: center;
   min-width: 320px;
-  min-height: 100vh;
+  height: 100vh;
+}
+
+body::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 20%;
+  width: 30%;
+  background: linear-gradient(to top, #242424, #24242450, #24242400);
 }
 
 h1 {
@@ -60,7 +74,7 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
