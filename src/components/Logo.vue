@@ -1,9 +1,8 @@
 <template>
 	<svg
 		id="158017962"
-		viewBox="0 0 350 172.065394614879"
-		height="230"
-		width="350"
+		viewBox="0 0 350 180"
+		height="200"
 	>
 		<defs id="SvgjsDefs1001"></defs>
 		<g

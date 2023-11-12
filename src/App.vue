@@ -25,12 +25,16 @@ interface Event {
 }
 
 const eventContainer = ref<Event[]>([
-	{ name: "have a meal", date: "2022-02-04", time: "13:32" },
-	{ name: "go to bed", date: "2023-02-03", time: "13:32" },
+	{ name: "Write event name", date: "1998-11-01", time: "10:25" },
 	{
-		name: "write code",
-		date: "2024-02-06",
-		time: "13:32",
+		name: "Set date time",
+		date: "2021-07-04",
+		time: "12:00",
+	},
+	{
+		name: "Click the Start button",
+		date: "2026-03-19",
+		time: "20:00",
 	},
 ]);
 
@@ -66,10 +70,7 @@ const handleEventCreate = () => {
 	const eventObj = { name, date, time };
 	eventContainer.value.unshift(eventObj);
 
-	console.log(eventContainer.value);
-
-	const gap = getDatetimeGap(targetDatetime, now);
-	console.log({ name, date, time, gap });
+	handleEventStart(eventObj);
 };
 
 const handleEventStart = (event: Event) => {
@@ -78,6 +79,8 @@ const handleEventStart = (event: Event) => {
 	const targetDatetime = new Date(`${date} ${time}`).getTime();
 
 	timer && clearInterval(timer);
+	const now = Date.now();
+	eventCountdown.value = { name, ...getDatetimeGap(targetDatetime, now) };
 
 	timer = setInterval(() => {
 		const now = Date.now();
@@ -102,6 +105,15 @@ const eventForm = reactive<EventForm>({
 	date: formatToday.date,
 	time: formatToday.time,
 });
+
+const numberDegit = (num: number) => {
+	return String(num).padStart(2, "0").length * 50 + "px";
+};
+
+const handleClose = () => {
+	eventCountdown.value.name = "";
+	clearInterval(timer);
+};
 </script>
 
 <template>
@@ -126,9 +138,15 @@ const eventForm = reactive<EventForm>({
 	</div>
 
 	<div v-if="eventCountdown.name" class="countdown-box">
+		<span class="close material-symbols-outlined" @click="handleClose">
+			close</span
+		>
 		<div class="gap">
 			<div class="gap-item days">
-				<span>{{ eventCountdown.days }}</span> days
+				<span :style="`--degit:${numberDegit(eventCountdown.days)}`">
+					{{ eventCountdown.days }}
+				</span>
+				days
 			</div>
 			<div class="gap-item hours">
 				<span>{{ eventCountdown.hours }}</span> hours
@@ -161,12 +179,12 @@ const eventForm = reactive<EventForm>({
 			<input class="time" v-model="eventForm.time" type="time" />
 		</div>
 
-		<button class="submit" @click="handleEventCreate">Create event</button>
+		<button class="submit" @click="handleEventCreate">start</button>
 	</div>
 </template>
 
 <style scoped lang="less">
-@import url("https://fonts.googleapis.com/css2?family=Electrolize&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
 
 .event-container {
 	position: fixed;
@@ -193,6 +211,7 @@ const eventForm = reactive<EventForm>({
 
 		.name {
 			font-size: 1.2em;
+			text-transform: capitalize;
 			margin-bottom: 8px;
 			white-space: nowrap;
 			overflow: hidden;
@@ -203,7 +222,7 @@ const eventForm = reactive<EventForm>({
 			color: #999;
 			display: flex;
 			justify-content: space-between;
-			font-family: Electrolize;
+			font-family: Roboto Mono;
 		}
 
 		.date {
@@ -218,19 +237,33 @@ const eventForm = reactive<EventForm>({
 
 .tips {
 	color: red;
-	margin-bottom: 1em;
+	margin: 1em 0;
 	height: 1em;
 }
 
 .countdown-box {
+	z-index: 999;
 	width: 100%;
-	background-color: #333;
-	padding: 2em 5em;
+	border: 3px solid #ccc;
+	background-color: #333333ee;
+	box-shadow: 0 3px 5px 5px #666;
+	padding: 2em 3em;
 	border-radius: 10px;
-	margin: 3em 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	position: relative;
+	user-select: none;
+
+	.material-symbols-outlined {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		font-size: 2em;
+		cursor: pointer;
+		font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+	}
+
 	.name {
 		width: 100%;
 		font-size: 32px;
@@ -250,13 +283,8 @@ const eventForm = reactive<EventForm>({
 			text-transform: uppercase;
 			span {
 				font-size: 5em;
-				width: 100px;
-				font-family: Electrolize;
-			}
-			&.days {
-				span {
-					width: 150px;
-				}
+				width: var(--degit, 100px);
+				font-family: Roboto Mono;
 			}
 		}
 	}
@@ -265,7 +293,6 @@ const eventForm = reactive<EventForm>({
 .event-form {
 	display: flex;
 	flex-direction: column;
-	margin-bottom: 3em;
 
 	.name,
 	.date,
@@ -284,11 +311,11 @@ const eventForm = reactive<EventForm>({
 
 	.date {
 		margin-right: 1em;
-		font-family: Electrolize;
+		font-family: Roboto Mono;
 	}
 
 	.time {
-		font-family: Electrolize;
+		font-family: Roboto Mono;
 	}
 
 	.submit {
