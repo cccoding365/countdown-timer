@@ -145,7 +145,7 @@ const handleClose = () => {
 				</span>
 				days
 			</div>
-			<div v-if="countdownBox.hours" class="gap-item hours">
+			<div class="gap-item hours">
 				<span>{{ countdownBox.hours }}</span> hours
 			</div>
 			<div class="gap-item minutes">
