@@ -25,12 +25,8 @@ const tipsHandler = ({ text, duration = 2000 }: TipsOption) => {
 	}, duration);
 };
 
-const handleEventCreate = (e: any) => {
-	e.preventDefault();
-
-	const name = e.target.form.name.value;
-	const date = e.target.form.date.value;
-	const time = e.target.form.time.value;
+const handleEventCreate = () => {
+	const { name, date, time } = eventForm;
 
 	if (!name) {
 		return tipsHandler({ text: "The field 'event name' is required!" });
@@ -104,10 +100,9 @@ const eventForm = reactive<EventForm>({
 		</div>
 	</div>
 
-	<form v-else class="event-form">
+	<div v-else class="event-form">
 		<input
 			class="name"
-			name="name"
 			v-model="eventForm.name"
 			placeholder="Please enter an event name"
 			autocomplete="off"
@@ -119,27 +114,22 @@ const eventForm = reactive<EventForm>({
 				:min="formatToday.date"
 				v-model="eventForm.date"
 				type="date"
-				name="date"
 			/>
-			<input
-				class="time"
-				v-model="eventForm.time"
-				type="time"
-				name="time"
-			/>
+			<input class="time" v-model="eventForm.time" type="time" />
 		</div>
 
-		<button class="submit" type="submit" @click="handleEventCreate">
-			Create event
-		</button>
-	</form>
+		<button class="submit" @click="handleEventCreate">Create event</button>
+	</div>
 </template>
 
 <style scoped lang="less">
+@import url("https://fonts.googleapis.com/css2?family=Electrolize&display=swap");
 .tips {
 	color: red;
 	margin-bottom: 1em;
+	height: 1em;
 }
+
 .countdown-box {
 	background-color: #333;
 	padding: 2em 5em;
@@ -157,6 +147,7 @@ const eventForm = reactive<EventForm>({
 			text-transform: uppercase;
 			span {
 				font-size: 3em;
+				font-family: Electrolize;
 			}
 		}
 	}
