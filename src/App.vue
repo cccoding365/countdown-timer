@@ -48,11 +48,12 @@ const handleEventCreate = () => {
 		});
 	}
 
-	const eventObj = {
+	const eventObj: Event = {
 		id: Date.now(),
 		name,
 		date,
 		time,
+		status: "doing",
 	};
 	eventContainer.value.unshift(eventObj);
 
@@ -62,7 +63,7 @@ const handleEventCreate = () => {
 };
 
 const handleEventStart = (event: Event) => {
-	const { date, time } = event;
+	const { id, date, time } = event;
 
 	const targetDatetime = new Date(`${date} ${time}`).getTime();
 
@@ -78,7 +79,11 @@ const handleEventStart = (event: Event) => {
 		const now = Date.now();
 		if (targetDatetime - now <= 0) {
 			clearInterval(timer);
-			countdownBox.value.name += " - Finished";
+			eventContainer.value.find(e => e.id === id)!.status = "done";
+			localStorage.setItem(
+				"Events",
+				JSON.stringify(eventContainer.value),
+			);
 			return;
 		}
 		countdownBox.value = {
@@ -107,11 +112,10 @@ const handleClose = () => {
 		<div
 			v-for="event in eventContainer"
 			class="event-card"
+			:class="event.status"
 			@click="handleEventStart(event)"
 		>
-			<div class="name">
-				{{ event.name }}
-			</div>
+			<div class="name">{{ event.name }}</div>
 			<div class="datetime">
 				<span class="date">{{ event.date }}</span>
 				<span class="time">{{ event.time }}</span>
@@ -175,7 +179,7 @@ const handleClose = () => {
 <style scoped lang="less">
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 820px) {
 	.event-container {
 		visibility: hidden;
 	}
@@ -204,6 +208,14 @@ const handleClose = () => {
 		transition: border-color 0.25s;
 		cursor: pointer;
 		position: relative;
+
+		&.doing {
+			background-color: rgba(144, 238, 144, 0.3);
+		}
+
+		&.done {
+			background-color: rgba(240, 128, 128, 0.3);
+		}
 
 		.close {
 			position: absolute;
