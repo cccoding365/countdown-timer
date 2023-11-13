@@ -4,11 +4,14 @@ export interface MessageOption {
 	duration?: number;
 }
 
+type EventStatus = "done" | "doing" | "unknown";
+
 export interface Event {
 	id: number;
 	name: string;
 	date: string;
 	time: string;
+	status?: EventStatus;
 }
 
 export interface EventForm {
