@@ -29,8 +29,14 @@ const handleEventDelete = ({ id }: Event) => {
 const handleEventCreate = () => {
 	const { name, date, time } = eventForm;
 
+	let defaultName: string = "";
+
 	if (!name) {
-		return Message({ text: "The field 'event name' is required!" });
+		defaultName = `Custom Event#${Math.random()
+			.toString(36)
+			.slice(2, 6)
+			.toUpperCase()}`;
+		Message({ text: "You did not enter a name, a random name will be used!" });
 	}
 	if (!date) {
 		return Message({ text: "The field 'date' is required!" });
@@ -50,7 +56,7 @@ const handleEventCreate = () => {
 
 	const eventObj: Event = {
 		id: Date.now(),
-		name,
+		name: name || defaultName,
 		date,
 		time,
 		status: "doing",
@@ -169,11 +175,7 @@ const handleClose = () => {
 				v-model="eventForm.date"
 				type="date"
 			/>
-			<input
-				class="time"
-				v-model="eventForm.time"
-				type="time"
-			/>
+			<input class="time" v-model="eventForm.time" type="time" />
 		</div>
 
 		<button class="button submit" type="submit">start</button>
