@@ -153,7 +153,7 @@ const handleClose = () => {
 		<div class="name">{{ countdownBox.name }}</div>
 	</div>
 
-	<div v-else class="event-form">
+	<form v-else class="event-form" @submit.prevent="handleEventCreate">
 		<input
 			class="name"
 			v-model="eventForm.name"
@@ -169,11 +169,16 @@ const handleClose = () => {
 				v-model="eventForm.date"
 				type="date"
 			/>
-			<input class="time" v-model="eventForm.time" type="time" />
+			<input
+				class="time"
+				v-model="eventForm.time"
+				type="time"
+			/>
 		</div>
 
-		<button class="submit" @click="handleEventCreate">start</button>
-	</div>
+		<button class="button submit" type="submit">start</button>
+		<button class="button reset" type="reset">reset</button>
+	</form>
 </template>
 
 <style scoped lang="less">
@@ -311,7 +316,7 @@ const handleClose = () => {
 	.name,
 	.date,
 	.time,
-	.submit {
+	.button {
 		text-align: center;
 		height: 1.5em;
 		font-size: 24px;
@@ -332,7 +337,7 @@ const handleClose = () => {
 		font-family: Roboto Mono;
 	}
 
-	.submit {
+	.button {
 		height: auto;
 		background-color: #333;
 		border-color: #666;
