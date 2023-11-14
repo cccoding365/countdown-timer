@@ -223,7 +223,7 @@ watch(eventForm, oldValue => {
 		border-radius: 8px;
 		background-color: #333;
 		text-align: left;
-		border: 3px solid #666;
+		border: 2px solid #666;
 		transition: border-color 0.25s;
 		cursor: pointer;
 		position: relative;
@@ -271,7 +271,7 @@ watch(eventForm, oldValue => {
 			border-radius: 999px;
 			padding: 0 15px;
 			border: 1px solid var(--labelColor);
-			box-shadow: 0 1px 3px 1px #666;
+			// box-shadow: 0 1px 3px 1px #666;
 			color: var(--labelColor);
 			background-color: var(--labelBackgroundColor);
 		}
