@@ -271,7 +271,6 @@ watch(eventForm, oldValue => {
 			border-radius: 999px;
 			padding: 0 15px;
 			border: 1px solid var(--labelColor);
-			// box-shadow: 0 1px 3px 1px #666;
 			color: var(--labelColor);
 			background-color: var(--labelBackgroundColor);
 		}
