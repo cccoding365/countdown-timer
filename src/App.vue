@@ -230,12 +230,12 @@ watch(eventForm, oldValue => {
 
 		&.doing {
 			--labelColor: rgb(144, 238, 144);
-			background-color: rgba(144, 238, 144, 0.3);
+			--labelBackgroundColor: rgba(144, 238, 144, 0.3);
 		}
 
 		&.done {
 			--labelColor: rgb(240, 128, 128);
-			background-color: rgba(240, 128, 128, 0.3);
+			--labelBackgroundColor: rgba(240, 128, 128, 0.3);
 		}
 
 		.close {
@@ -270,13 +270,14 @@ watch(eventForm, oldValue => {
 			width: fit-content;
 			border-radius: 999px;
 			padding: 0 15px;
-			border: 1px solid #fff;
+			border: 1px solid var(--labelColor);
 			box-shadow: 0 1px 3px 1px #666;
-			background-color: var(--labelColor);
+			color: var(--labelColor);
+			background-color: var(--labelBackgroundColor);
 		}
 
 		&:hover {
-			border-color: #eee;
+			border-color: var(--labelColor);
 		}
 	}
 }
