@@ -12,12 +12,14 @@ export interface Event {
 	date: string;
 	time: string;
 	status?: EventStatus;
+	label?: string;
 }
 
 export interface EventForm {
 	name: string;
 	date: string;
 	time: string;
+	label?: string;
 }
 
 export interface CountdownBox {

@@ -5,6 +5,7 @@ export const EventFormDefault: EventForm = {
 	name: "",
 	date: formatToday.date,
 	time: formatToday.time,
+	label: "",
 };
 
 export const CountdownBoxDefault: CountdownBox = {

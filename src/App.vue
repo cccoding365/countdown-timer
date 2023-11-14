@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Logo from "@/components/Logo.vue";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { Event, EventForm, CountdownBox } from "@/types";
 import { getDatetimeGap, formatToday, Message } from "@/utils";
 import { EventFormDefault, CountdownBoxDefault } from "@/constants";
@@ -36,7 +36,9 @@ const handleEventCreate = () => {
 			.toString(36)
 			.slice(2, 6)
 			.toUpperCase()}`;
-		Message({ text: "You did not enter a name, a random name will be used!" });
+		Message({
+			text: "You did not enter a name, a random name will be used!",
+		});
 	}
 	if (!date) {
 		return Message({ text: "The field 'date' is required!" });
@@ -54,12 +56,16 @@ const handleEventCreate = () => {
 		});
 	}
 
+	const customName = eventForm.name.includes("@") ? name.split("@")[0] : name;
+	const label = eventForm.name.includes("@") ? name.split("@")[1] : "";
+
 	const eventObj: Event = {
 		id: Date.now(),
-		name: name || defaultName,
+		name: customName || defaultName,
 		date,
 		time,
 		status: "doing",
+		label,
 	};
 	eventContainer.value.unshift(eventObj);
 
@@ -107,33 +113,18 @@ const handleClose = () => {
 	countdownBox.value.name = "";
 	clearInterval(timer);
 };
+
+watch(eventForm, oldValue => {
+	if (oldValue.name.includes("@")) {
+		eventForm.label = oldValue.name.split("@")[1];
+	}
+});
 </script>
 
 <template>
 	<Logo />
 
 	<div id="tips" class="tips"></div>
-
-	<div class="event-container">
-		<div
-			v-for="event in eventContainer"
-			class="event-card"
-			:class="event.status"
-			@click="handleEventStart(event)"
-		>
-			<div class="name">{{ event.name }}</div>
-			<div class="datetime">
-				<span class="date">{{ event.date }}</span>
-				<span class="time">{{ event.time }}</span>
-			</div>
-			<div
-				class="close material-symbols-outlined"
-				@click.stop="handleEventDelete(event)"
-			>
-				close
-			</div>
-		</div>
-	</div>
 
 	<div v-if="countdownBox.name" class="countdown-box">
 		<span class="close material-symbols-outlined" @click="handleClose">
@@ -179,8 +170,29 @@ const handleClose = () => {
 		</div>
 
 		<button class="button submit" type="submit">start</button>
-		<button class="button reset" type="reset">reset</button>
 	</form>
+
+	<div class="event-container">
+		<div
+			v-for="event in eventContainer"
+			class="event-card"
+			:class="event.status"
+			@click="handleEventStart(event)"
+		>
+			<div class="name">{{ event.name }}</div>
+			<div class="datetime">
+				<span class="date">{{ event.date }}</span>
+				<span class="time">{{ event.time }}</span>
+			</div>
+			<div v-if="event.label" class="label">{{ event.label }}</div>
+			<div
+				class="close material-symbols-outlined"
+				@click.stop="handleEventDelete(event)"
+			>
+				close
+			</div>
+		</div>
+	</div>
 </template>
 
 <style scoped lang="less">
@@ -217,10 +229,12 @@ const handleClose = () => {
 		position: relative;
 
 		&.doing {
+			--labelColor: rgb(144, 238, 144);
 			background-color: rgba(144, 238, 144, 0.3);
 		}
 
 		&.done {
+			--labelColor: rgb(240, 128, 128);
 			background-color: rgba(240, 128, 128, 0.3);
 		}
 
@@ -248,6 +262,17 @@ const handleClose = () => {
 
 		.date {
 			margin-right: 1em;
+		}
+
+		.label {
+			font-size: 0.7em;
+			margin-top: 8px;
+			width: fit-content;
+			border-radius: 999px;
+			padding: 0 15px;
+			border: 1px solid #fff;
+			box-shadow: 0 1px 3px 1px #666;
+			background-color: var(--labelColor);
 		}
 
 		&:hover {
