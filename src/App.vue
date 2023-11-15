@@ -152,7 +152,7 @@ watch(eventForm, oldValue => {
 
 	<form v-else class="event-form" @submit.prevent="handleEventCreate">
 		<input
-			class="name"
+			class="form-item name"
 			v-model="eventForm.name"
 			placeholder="Please enter an event name"
 			autocomplete="off"
@@ -161,15 +161,19 @@ watch(eventForm, oldValue => {
 
 		<div class="datetime">
 			<input
-				class="date"
+				class="form-item date"
 				:min="formatToday.date"
 				v-model="eventForm.date"
 				type="date"
 			/>
-			<input class="time" v-model="eventForm.time" type="time" />
+			<input
+				class="form-item time"
+				v-model="eventForm.time"
+				type="time"
+			/>
 		</div>
 
-		<button class="button submit" type="submit">start</button>
+		<button class="form-item button submit" type="submit">start</button>
 	</form>
 
 	<div class="event-container">
@@ -340,10 +344,7 @@ watch(eventForm, oldValue => {
 	display: flex;
 	flex-direction: column;
 
-	.name,
-	.date,
-	.time,
-	.button {
+	.form-item {
 		text-align: center;
 		height: 1.5em;
 		font-size: 24px;
